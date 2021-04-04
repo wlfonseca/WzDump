@@ -4,12 +4,12 @@
     <Transaction>2018/12/10 12:33:36.000.705,=rtl.dcp</Transaction>
     <Transaction>2018/12/10 12:33:48.000.110,=C:\Users\Tom\Documents\Embarcadero\Studio\Projects\WDump.pas</Transaction>
     <Transaction>2018/12/10 12:35:47.000.907,=ZPlain.dcp</Transaction>
-    <Transaction>2018/12/10 12:35:47.000.784,=dbrtl.dcp</Transaction>
+    <Transaction>2018/12/10 12:35:47.000.760,=vcl.dcp</Transaction>
     <Transaction>2018/12/10 12:35:47.000.894,=ZDbc.dcp</Transaction>
     <Transaction>2018/12/10 12:35:47.000.821,=ZComponent.dcp</Transaction>
-    <Transaction>2018/12/10 12:35:47.000.760,=vcl.dcp</Transaction>
-    <Transaction>2018/12/10 12:35:47.000.795,=VclSmp.dcp</Transaction>
+    <Transaction>2018/12/10 12:35:47.000.784,=dbrtl.dcp</Transaction>
     <Transaction>2018/12/10 12:35:47.000.935,=ZCore.dcp</Transaction>
+    <Transaction>2018/12/10 12:35:47.000.795,=VclSmp.dcp</Transaction>
     <Transaction>2018/12/10 12:35:47.000.958,=ZParseSql.dcp</Transaction>
     <Transaction>2018/12/10 12:36:08.000.503,C:\Users\Tom\Documents\Embarcadero\Studio\Projects\WDump.pas=C:\Projetos\WDUmp\WDump.pas</Transaction>
     <Transaction>2018/12/10 12:36:49.000.209,C:\Users\Tom\Documents\Embarcadero\Studio\Projects\WDump.dproj=C:\Projetos\WDUmp\WZDump.dproj</Transaction>
@@ -17,8 +17,8 @@
     <Transaction>2019/01/03 08:56:59.000.386,C:\Projetos\WDUmp\WZDump.dproj=C:\Projetos\WDUmp\WZMyDump.dproj</Transaction>
     <Transaction>2019/04/16 11:11:14.000.995,=ZDbc.dcp</Transaction>
     <Transaction>2019/04/16 11:11:14.000.944,=ZComponent.dcp</Transaction>
-    <Transaction>2019/04/16 11:11:15.000.109,=ZCore.dcp</Transaction>
     <Transaction>2019/04/16 11:11:15.000.054,=ZPlain.dcp</Transaction>
+    <Transaction>2019/04/16 11:11:15.000.109,=ZCore.dcp</Transaction>
     <Transaction>2019/04/16 11:11:15.000.144,=ZParseSql.dcp</Transaction>
   </Transactions>
 </BorlandProject>

@@ -608,10 +608,7 @@ end;
 
 function TWDump.statementPGCreateTable(table: string): string;
 begin
-  Result := ' SELECT '+QuotedStr(table)+' as table, ''CREATE TABLE '' || relname || E'''+EOL+'('+EOL+''' || ' +
-  '  array_to_string(    array_agg(  ''    '' || column_name || ' +
-  QuotedStr(' ') + ' ||  type || ' + QuotedStr(' ') + ' || not_null'+
-  ' ), E'','+EOL+''' ) || E'''+EOL+');'+EOL+''' from ( SELECT c.relname, a.attname AS column_name, pg_catalog.format_type(a.atttypid, a.atttypmod) as type, case when a.attnotnull  then ''NOT NULL'' ' + ' else ''NULL'' END as not_null FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = ' + QuotedStr(table) + '  AND a.attnum > 0  AND a.attrelid = c.oid    AND a.atttypid = t.oid  ORDER BY a.attnum ) as tabledefinition group by relname';
+  Result := ' SELECT ' + QuotedStr(table) + ' as table, ''CREATE TABLE '' || relname || E''' + EOL + '(' + EOL + ''' || ' + '  array_to_string(    array_agg(  ''    '' || column_name || ' + QuotedStr(' ') + ' ||  type || ' + QuotedStr(' ') + ' || not_null' + ' ), E'',' + EOL + ''' ) || E''' + EOL + ');' + EOL + ''' from ( SELECT c.relname, a.attname AS column_name, pg_catalog.format_type(a.atttypid, a.atttypmod) as type, case when a.attnotnull  then ''NOT NULL'' ' + ' else ''NULL'' END as not_null FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = ' + QuotedStr(table) + '  AND a.attnum > 0  AND a.attrelid = c.oid    AND a.atttypid = t.oid  ORDER BY a.attnum ) as tabledefinition group by relname';
 end;
 
 procedure TWDump.DumpTables;
@@ -621,52 +618,49 @@ var
   arq: TextFile;
   count, percent, numfields: integer;
 begin
+  try
+    q2 := TZQuery.Create(nil);
 
-  q2 := TZQuery.Create(nil);
-  q2.Connection := Fconn;
+    q2.Connection := Fconn;
 
-  with q2 do
-  begin
-    close;
-    sql.Clear;
-    //sql.Text := 'SELECT * FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ' + QuotedStr(GetFDatabase) + ' and table_type = ' + QuotedStr('BASE TABLE');
-    //sql.Text := 'SHOW TABLES';
+    with q2 do
+    begin
+      close;
+      sql.Clear;
 
-    if Connection.Protocol = 'mysql' then
-      sql.text := 'show table status  where engine  is not null'
-    else if Connection.Protocol = 'postgresql' then
-      sql.Text := 'SELECT  table_name as show_tables FROM information_schema.tables WHERE   table_type = ' + QuotedStr('BASE TABLE') + ' AND  table_schema NOT IN (''pg_catalog'', ''information_schema'') order by show_tables;';
-{
-      sql.Text := '       SELECT  ''CREATE TABLE '' || relname || E''\n(\n'' || '+
-    '  array_to_string(    array_agg(  ''    '' || column_name || '+QuotedStr(' ')+' ||  type || '+QuotedStr(' ')+' || not_null'' ), E'',\n'' ) || E''\n);\n'' from ( SELECT c.relname, a.attname AS column_name, pg_catalog.format_type(a.atttypid, a.atttypmod) as type, case when a.attnotnull  then ''NOT NULL'' '+
-    ' else ''NULL'' END as not_null FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = ''item''  AND a.attnum > 0  AND a.attrelid = c.oid    AND a.atttypid = t.oid  ORDER BY a.attnum ) as tabledefinition group by relname;';
- }
-    try
-      Open;
-    except
-      on e: Exception do
-      begin
-        Closefile(arq);
-        if Assigned(FOnError) then
-          Fonerror(E.Message, GetFDatabase);
+      if Connection.Protocol = 'mysql' then
+        sql.text := 'show table status  where engine  is not null'
+      else if Connection.Protocol = 'postgresql' then
+        sql.Text := 'SELECT  table_name as show_tables FROM information_schema.tables WHERE   table_type = ' + QuotedStr('BASE TABLE') + ' AND  table_schema NOT IN (''pg_catalog'', ''information_schema'') order by show_tables;';
+      try
+        Open;
+      except
+        on e: Exception do
+        begin
+          Closefile(arq);
+          if Assigned(FOnError) then
+            Fonerror(E.Message, GetFDatabase);
+        end;
       end;
     end;
-  end;
 
-  if q2.RecordCount > 0 then
-  begin
-    while not q2.eof do
+    if q2.RecordCount > 0 then
     begin
-      application.ProcessMessages;
-      FTableNames := FTableNames + q2.Fields[0].AsString + ',';
-      application.ProcessMessages;
-      q2.Next;
-    end;
-    delete(FTableNames, length(FTableNames), 1);
-    DumpEspecificsTables;
-  end
-  else
-    Fonerror('Tabelas Não encontradas', GetFDatabase);
+      while not q2.eof do
+      begin
+        application.ProcessMessages;
+        FTableNames := FTableNames + q2.Fields[0].AsString + ',';
+        application.ProcessMessages;
+        q2.Next;
+      end;
+      delete(FTableNames, length(FTableNames), 1);
+      DumpEspecificsTables;
+    end
+    else
+      Fonerror('Tabelas Não encontradas', GetFDatabase);
+  finally
+    FreeAndNIl(q2);
+  end;
 end;
 
 procedure TWDump.DumpEspecificsTables;
@@ -692,7 +686,6 @@ begin
 
   if assigned(Fprogress) then
     Fprogress.Progress := 0;
-
   try
     Lista := explode(Ftablenames, ',');
   except
@@ -707,8 +700,8 @@ begin
     Append(arq)
   else
     Rewrite(arq);
- if Fconn.Protocol = 'mysql' then
-  Writeln(arq, 'SET FOREIGN_KEY_CHECKS=0;');
+  if Fconn.Protocol = 'mysql' then
+    Writeln(arq, 'SET FOREIGN_KEY_CHECKS=0;');
 
   for i := 0 to Lista.count - 1 do
   begin
@@ -748,7 +741,7 @@ begin
         if Connection.Protocol = 'mysql' then
           sql.text := 'show columns from ' + Lista[i]
         else
-            sql.Text := 'SELECT COLUMN_NAME as field FROM information_schema.COLUMNS WHERE TABLE_NAME ='+ QuotedStr(Lista[i]) ;
+          sql.Text := 'SELECT COLUMN_NAME as field FROM information_schema.COLUMNS WHERE TABLE_NAME =' + QuotedStr(Lista[i]);
 
         try
           open;
@@ -774,23 +767,26 @@ begin
       begin
         Close;
         sql.clear;
-        sql.text := 'select count(*) from "' + Lista[i]+'"';
+        sql.text := 'select count(*) from ' + Lista[i];
 
         try
           Open;
         except
           on e: exception do
           begin
-            showmessage('Erro obtendo total de '+ Lista[i]+' query '+sql.text+' erro '+e.message);
+            if Assigned(FOnerror) then
+              FOnError('Erro obtendo total de ' + Lista[i] + ' query ' + sql.text + ' erro ' + e.message, Lista[i]);
+            CloseFile(arq);
+
           end;
         end;
-
 
         numrows := fields[0].AsInteger;
       end;
 
       if assigned(Fprogress) then
       begin
+
         Fprogress.Progress := 0;
         Fprogress.MaxValue := numrows;
         Fprogress.Refresh;
@@ -799,7 +795,7 @@ begin
       row := 0;
       if numrows > 0 then
         if Assigned(FonProgress) then
-          FOnProgress((Fprogress.Progress * 100 div numrows), Lista.count, (i + 1),  'Table ', Lista[i]);
+          FOnProgress((Fprogress.Progress * 100 div numrows), Lista.count, (i + 1), 'Table ', Lista[i]);
 
       while row < numrows do
       begin
@@ -814,14 +810,13 @@ begin
           Close;
           sql.clear;
           if connection.Protocol = 'mysql' then
-             sql.text := 'select * from ' + Lista[i] + ' limit ' + IntToStr(row) + ',' + IntToStr(rowsperselect)
-             else
-               sql.text := 'select * from "' + Lista[i] + '" limit ' + IntToStr(rowsperselect) + ' OFFSET ' + IntToStr(row) ;
+            sql.text := 'select * from ' + Lista[i] + ' limit ' + IntToStr(row) + ',' + IntToStr(rowsperselect)
+          else
+            sql.text := 'select * from "' + Lista[i] + '" limit ' + IntToStr(rowsperselect) + ' OFFSET ' + IntToStr(row);
 
           Open;
         end;
         row := (row + rowsperselect);
-
 
         if q5.active then
           if q5.RecordCount > 0 then //se tiver dados
@@ -890,11 +885,14 @@ begin
     end;
     application.ProcessMessages;
   end;
+
+  q2.Free;
   q3.Free;
   q4.Free;
   q5.Free;
- if Fconn.Protocol = 'mysql' then
-  Writeln(arq, 'SET FOREIGN_KEY_CHECKS=1;');
+  FreeAndNIl(Lista);
+  if Fconn.Protocol = 'mysql' then
+    Writeln(arq, 'SET FOREIGN_KEY_CHECKS=1;');
   Closefile(arq);
 end;
 
@@ -968,11 +966,12 @@ begin
     q3.Free;
   end;
   Closefile(arq);
+
 end;
 
 procedure TWDump.DumpTriggers;
 var
-  q2, q3, q4, q5: TZQuery;
+  q2, q3 : TZQuery;
   linha, campo, values, pvalues: string;
   arq: TextFile;
   count, numfields: integer;

@@ -1,9 +1,9 @@
 object Form13: TForm13
   Left = 0
   Top = 0
-  Caption = 'Form13'
+  Caption = 'LeBackup'
   ClientHeight = 318
-  ClientWidth = 333
+  ClientWidth = 341
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,13 +11,13 @@ object Form13: TForm13
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Gauge1: TGauge
     Left = 0
     Top = 253
-    Width = 333
+    Width = 341
     Height = 33
     Align = alBottom
     Progress = 0
@@ -32,6 +32,14 @@ object Form13: TForm13
     Height = 13
     Caption = 'Label1'
   end
+  object SpeedButton1: TSpeedButton
+    Left = 292
+    Top = 113
+    Width = 23
+    Height = 22
+    Caption = '...'
+    OnClick = SpeedButton1Click
+  end
   object Button1: TButton
     Left = 120
     Top = 203
@@ -44,7 +52,7 @@ object Form13: TForm13
   object EdtDestino: TLabeledEdit
     Left = 24
     Top = 114
-    Width = 281
+    Width = 262
     Height = 21
     EditLabel.Width = 36
     EditLabel.Height = 13
@@ -55,18 +63,18 @@ object Form13: TForm13
   object EdtDataBase: TLabeledEdit
     Left = 24
     Top = 72
-    Width = 121
+    Width = 132
     Height = 21
     EditLabel.Width = 46
     EditLabel.Height = 13
     EditLabel.Caption = 'Database'
     TabOrder = 2
-    Text = 'lojas'
+    Text = 'database'
   end
   object EdtHost: TLabeledEdit
     Left = 24
     Top = 32
-    Width = 121
+    Width = 132
     Height = 21
     EditLabel.Width = 22
     EditLabel.Height = 13
@@ -77,7 +85,7 @@ object Form13: TForm13
   object EdtUser: TLabeledEdit
     Left = 184
     Top = 32
-    Width = 121
+    Width = 131
     Height = 21
     EditLabel.Width = 36
     EditLabel.Height = 13
@@ -88,7 +96,7 @@ object Form13: TForm13
   object EdtPasswd: TLabeledEdit
     Left = 184
     Top = 72
-    Width = 121
+    Width = 131
     Height = 21
     EditLabel.Width = 30
     EditLabel.Height = 13
@@ -99,7 +107,7 @@ object Form13: TForm13
   object ProgressBar1: TProgressBar
     Left = 0
     Top = 286
-    Width = 333
+    Width = 341
     Height = 32
     Align = alBottom
     TabOrder = 6
@@ -107,18 +115,18 @@ object Form13: TForm13
   object EdtValuesPerInsert: TLabeledEdit
     Left = 24
     Top = 160
-    Width = 81
+    Width = 90
     Height = 21
     EditLabel.Width = 80
     EditLabel.Height = 13
     EditLabel.Caption = 'Values por insert'
     TabOrder = 7
-    Text = '99'
+    Text = '999'
   end
   object EdtTabelas: TLabeledEdit
     Left = 184
-    Top = 164
-    Width = 121
+    Top = 160
+    Width = 131
     Height = 21
     EditLabel.Width = 37
     EditLabel.Height = 13
@@ -128,29 +136,20 @@ object Form13: TForm13
   object ZConnection1: TZConnection
     ControlsCodePage = cCP_UTF16
     Catalog = ''
-    HostName = 'tef.net.br'
+    HostName = 'localhost'
     Port = 0
-    Database = 'tefnet_erp'
-    User = 'tefnet_erp'
-    Password = 'tefnet753951'
-    Protocol = 'postgresql'
+    Database = 'lojas'
+    User = 'root'
+    Password = ''
+    Protocol = 'mysql'
     Left = 368
     Top = 32
   end
-  object WDump1: TWDump
-    Caminho = 'c:\novo.sql'
-    Conn = ZConnection1
-    Gauge = Gauge1
-    Database = 'tefnet_erp'
-    DumperViews = False
-    DumperTriggers = False
-    DumperTables = True
-    DumperFunctions = False
-    DumperEvents = False
-    DumperProcedures = False
-    OnProgress = WDump1Progress
-    ValuesPerInsert = 18
-    Left = 368
-    Top = 88
+  object SaveDialog1: TSaveDialog
+    DefaultExt = '.sql'
+    FileName = '.sql'
+    Filter = 'SQL|*.sql'
+    Left = 272
+    Top = 198
   end
 end
